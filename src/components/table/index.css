@@ -1,0 +1,25 @@
+.field-title {
+    text-align: start;
+}
+
+.table {
+    border-radius: 10px !important;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+tbody tr:last-of-type th {
+    border-bottom-left-radius: 10px !important;
+}
+
+tr:last-of-type td {
+    border-bottom-right-radius: 10px !important;
+}
+
+thead th:first-of-type {
+    border-top-left-radius: 10px !important;
+}
+
+thead th:last-of-type {
+    border-top-right-radius: 10px !important;
+}

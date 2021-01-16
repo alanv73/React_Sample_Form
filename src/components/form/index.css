@@ -1,0 +1,7 @@
+.disabled-label {
+    color: lightgrey;
+}
+
+label {
+    justify-content: start !important;
+}
