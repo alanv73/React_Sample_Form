@@ -10,7 +10,7 @@ class SampleForm extends Component {
         sampleSize: '',
         sampleMean: '',
         stDev: '',
-        doHyposthesisTest: false,
+        doHypothesisTest: false,
         hypMean: ''
     };
         
@@ -34,7 +34,7 @@ class SampleForm extends Component {
 
     handleReset = e => {
         this.setState(() => this.initialState);
-        this.enableHypMeanLabel(this.doHyposthesisTest);
+        this.enableHypMeanLabel(this.doHypothesisTest);
     }
 
     onInputChange = e => {
@@ -98,7 +98,7 @@ class SampleForm extends Component {
     onDoTestCheckClick = e => {
         const checked = e.target.checked;
         this.enableHypMeanLabel(checked);
-        this.setState({ doHyposthesisTest: checked });
+        this.setState({ doHypothesisTest: checked });
     }
 
     enableHypMeanLabel = boolean => {
@@ -116,7 +116,7 @@ class SampleForm extends Component {
             sampleSize, 
             sampleMean, 
             stDev,
-            doHyposthesisTest,
+            doHypothesisTest,
             hypMean
          } = this.state;
 
@@ -149,13 +149,13 @@ class SampleForm extends Component {
                             <input 
                                 className="form-check-input" 
                                 type="checkbox" 
-                                checked={doHyposthesisTest} 
+                                checked={doHypothesisTest} 
                                 onChange={this.onDoTestCheckClick}
                                 id="hypTestCheck" />
                             <label 
                                 className="form-check-label" 
                                 htmlFor="hypTestCheck">
-                                Perform hyposthesis test
+                                Perform hypothesis test
                             </label>
                         </div>
                         <TextFormField 
@@ -163,8 +163,8 @@ class SampleForm extends Component {
                             id="hypmean"
                             value={hypMean}
                             onChange={this.onInputChange}
-                            disabled={!doHyposthesisTest}
-                            label="Hyposthesized mean" />
+                            disabled={!doHypothesisTest}
+                            label="Hypothesized mean" />
                         <div className="mx-auto d-flex justify-content-end">
                             <Button 
                                     className="col-sm-3 mr-2"
