@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+import TextFormField from '../text_form_field';
 import Button from 'react-bootstrap/Button';
+import React, { Component } from 'react';
 import './index.css';
-import FormField from '../formfield';
 
 class SampleForm extends Component {
+    minSampleSize = 2;
+
     initialState = { 
-        minSampleSize: 2,
-        minStDev: 0.0,
         sampleSize: '',
         sampleMean: '',
         stDev: '',
-        doHypTest: false,
+        doHyposthesisTest: false,
         hypMean: ''
     };
         
@@ -19,7 +19,7 @@ class SampleForm extends Component {
         this.state = this.initialState;
 
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.onResetClick = this.onResetClick.bind(this);
+        this.handleReset = this.handleReset.bind(this);
     }
 
     componentDidMount() {
@@ -32,21 +32,76 @@ class SampleForm extends Component {
         e.preventDefault();
     }
 
+    handleReset = e => {
+        this.setState(() => this.initialState);
+        this.enableHypMeanLabel(this.doHyposthesisTest);
+    }
+
     onInputChange = e => {
         const value = e.target.value;
+
+        switch(e.target.name){
+            case 'sampleSize':
+                if(value !== '' && value < this.minSampleSize){
+                    e.target.setCustomValidity(`Value must be greater than ${this.minSampleSize}`);
+                } else {
+                    if(!this.isInteger(value)){
+                        e.target.setCustomValidity(`Value must be an integer`);
+                    } else {
+                        e.target.setCustomValidity('');
+                    }
+                }
+
+                break;
+
+            case 'sampleMean': 
+            case 'hypMean':
+                if(!this.isFloat(value)){
+                    e.target.setCustomValidity(`Value must be a number`);
+                } else {
+                    e.target.setCustomValidity('');
+                }
+
+                break;
+
+            case 'stDev':
+                if(value === ''){
+                    e.target.setCustomValidity('');
+                } else if(value <= 0){
+                    e.target.setCustomValidity('Value must be greater than 0');
+                } else if(!this.isFloat(value)){
+                    e.target.setCustomValidity('Value must be a number');
+                } else {
+                    e.target.setCustomValidity('');
+                }
+
+                break;
+
+            default:
+                e.target.setCustomValidity('');
+        }
+
         this.setState({
             ...this.state,
             [e.target.name]: value
         });
     }
 
+    isInteger = val => {
+        return /^\+?(0|[1-9]\d*)$/.test(val);
+    }
+
+    isFloat = val => {
+        return /^[-+]?[0-9]*\.?[0-9]+/.test(val);
+    }
+
     onDoTestCheckClick = e => {
         const checked = e.target.checked;
         this.enableHypMeanLabel(checked);
-        this.setState({ doHypTest: checked });
+        this.setState({ doHyposthesisTest: checked });
     }
 
-    enableHypMeanLabel(boolean) {
+    enableHypMeanLabel = boolean => {
         const meanLabel = document.querySelector("label[for='hypmean']");
 
         if(boolean){
@@ -56,19 +111,12 @@ class SampleForm extends Component {
         }
     }
 
-    onResetClick = e => {
-        this.setState(() => this.initialState);
-        this.enableHypMeanLabel(this.doHypTest);
-    }
-
     render() {
         const { 
-            minSampleSize, 
-            minStDev,
             sampleSize, 
             sampleMean, 
             stDev,
-            doHypTest,
+            doHyposthesisTest,
             hypMean
          } = this.state;
 
@@ -77,34 +125,31 @@ class SampleForm extends Component {
                     <form 
                         id="sample-form" 
                         method="post" 
-                        onReset={this.onResetClick}
+                        onReset={this.handleReset}
                         onSubmit={this.handleSubmit}>
-                        <FormField 
+                        <TextFormField 
                             name="sampleSize"
                             id="size"
                             value={sampleSize}
                             onChange={this.onInputChange}
-                            min={minSampleSize}
                             label="Sample size" />
-                        <FormField 
+                        <TextFormField 
                             name="sampleMean"
                             id="mean"
                             value={sampleMean}
                             onChange={this.onInputChange}
                             label="Sample mean" />
-                        <FormField 
+                        <TextFormField 
                             name="stDev"
                             id="stdev"
                             value={stDev}
                             onChange={this.onInputChange}
-                            step={0.000001}
-                            min={minStDev}
                             label="Standard deviation" />
                         <div className="form-check d-flex flex-row mb-0">
                             <input 
                                 className="form-check-input" 
                                 type="checkbox" 
-                                checked={doHypTest} 
+                                checked={doHyposthesisTest} 
                                 onChange={this.onDoTestCheckClick}
                                 id="hypTestCheck" />
                             <label 
@@ -113,12 +158,12 @@ class SampleForm extends Component {
                                 Perform hyposthesis test
                             </label>
                         </div>
-                        <FormField 
+                        <TextFormField 
                             name="hypMean"
                             id="hypmean"
                             value={hypMean}
                             onChange={this.onInputChange}
-                            disabled={!doHypTest}
+                            disabled={!doHyposthesisTest}
                             label="Hyposthesized mean" />
                         <div className="mx-auto d-flex justify-content-end">
                             <Button 
