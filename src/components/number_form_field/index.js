@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FormField = props => {
+const NumberFormField = props => {
     const { 
         label,
         name,
@@ -35,4 +35,4 @@ const FormField = props => {
     );
 }
 
-export default FormField;
+export default NumberFormField;
