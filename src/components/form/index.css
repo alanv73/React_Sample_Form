@@ -5,3 +5,10 @@
 label {
     justify-content: start !important;
 }
+
+small {
+    display: inline-block;
+    min-width: 100%;
+    text-align: right;
+    color: red;
+}

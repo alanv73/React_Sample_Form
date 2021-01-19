@@ -6,7 +6,7 @@ class OutputTable extends Component {
             minSampleSize: '',
             sampleSize: '',
             sampleMean: '',
-            stDev: '',
+            stDeviation: '',
             doHyposthesisTest: false,
             hypMean: ''
         };
@@ -16,7 +16,7 @@ class OutputTable extends Component {
             minSampleSize,
             sampleSize,
             sampleMean,
-            stDev,
+            stDeviation,
             doHypothesisTest,
             hypMean
         } = this.props.location.state;
@@ -25,7 +25,7 @@ class OutputTable extends Component {
             minSampleSize: minSampleSize, 
             sampleSize: sampleSize, 
             sampleMean: sampleMean,
-            stDev: stDev,
+            stDeviation: stDeviation,
             doHypothesisTest: doHypothesisTest,
             hypMean: hypMean
         });
@@ -35,7 +35,7 @@ class OutputTable extends Component {
         const {
             sampleSize,
             sampleMean,
-            stDev,
+            stDeviation,
             doHypothesisTest,
             hypMean
         } = this.state;
@@ -60,7 +60,7 @@ class OutputTable extends Component {
                         </tr>
                         <tr>
                             <th className="field-title">Standard deviation</th>
-                            <td>{stDev}</td>
+                            <td>{stDeviation}</td>
                         </tr>
                         {
                             doHypothesisTest

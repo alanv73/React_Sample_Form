@@ -1,6 +1,6 @@
 import React from 'react';
 
-const NumberFormField = props => {
+const TextFormField = props => {
     const { 
         label,
         name,
@@ -9,6 +9,7 @@ const NumberFormField = props => {
         pattern,
         onChange,
         disabled,
+        errors
     } = props;
 
     return (
@@ -27,10 +28,16 @@ const NumberFormField = props => {
                 pattern={pattern}
                 onChange={onChange}
                 disabled={disabled || false}
-                required
             />
+            {
+                errors.length > 0
+                &&
+                errors.map(error => {
+                    return <small className="mt-0" key={error}>{error}</small>
+                })
+            }
         </div>
     );
 }
 
-export default NumberFormField;
+export default TextFormField;

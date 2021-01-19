@@ -6,12 +6,19 @@ import './index.css';
 class SampleForm extends Component {
     minSampleSize = 2;
 
+    validationErrors = {
+        sampleSize: [],
+        sampleMean: [],
+        stDeviation: [],
+        hypMean: []
+    };
+
     initialState = { 
         sampleSize: '',
         sampleMean: '',
-        stDev: '',
+        stDeviation: '',
         doHypothesisTest: false,
-        hypMean: ''
+        hypMean: '',
     };
         
     constructor(props) {
@@ -23,16 +30,91 @@ class SampleForm extends Component {
     }
 
     componentDidMount() {
-        const meanLabel = document.querySelector("label[for='hypmean']");
-        meanLabel.classList.add("disabled-label");
+        this.enableHypMeanLabel(false);
     }
 
     handleSubmit = e => {
-        this.props.history.push('/table', this.state);
         e.preventDefault();
+        
+        const valid = this.doDataValidation();
+
+        if(valid){
+            this.props.history.push('/table', this.state);
+        } else {
+            this.setState({isSubmitted: true});
+        }
+    }
+
+    doDataValidation = () => {
+        let valid = true;
+        const{
+            sampleSize,
+            sampleMean,
+            stDeviation,
+            doHypothesisTest,
+            hypMean
+        } = this.state;
+
+        this.clearErrorLists();
+
+        if(sampleSize === ''){
+            this.validationErrors.sampleSize.push('This field is required');
+            valid = false;
+        } else {
+            if(sampleSize < this.minSampleSize){
+                this.validationErrors.sampleSize.push(`Value must be ${this.minSampleSize} or greater`);
+                valid = false;
+            }
+
+            if(!this.isInteger(sampleSize)){
+                this.validationErrors.sampleSize.push('Value must be a whole number');
+                valid = false;
+            }
+        }
+        
+        if(sampleMean === ''){
+            this.validationErrors.sampleMean.push('This field is required');
+            valid = false;
+        } else {
+            if(!this.isFloat(sampleMean)){
+                this.validationErrors.sampleMean.push('Value must be a number');
+                valid = false;
+            }
+        }
+
+        if(stDeviation === ''){
+            this.validationErrors.stDeviation.push('This field is required');
+            valid = false;
+        } else {
+            if(stDeviation <= 0){
+                this.validationErrors.stDeviation.push('Value must be greater than 0');
+                valid = false;
+            }
+
+            if(!this.isFloat(stDeviation)){
+                this.validationErrors.stDeviation.push('Value must be a number');
+                valid = false;
+            }
+        }
+
+        if(doHypothesisTest){
+            if(hypMean === ''){
+                this.validationErrors.hypMean.push('This field is required');
+                valid = false;
+            } else {
+                if(!this.isFloat(hypMean)){
+                    this.validationErrors.hypMean.push('Value must be a number');
+                    valid = false;
+                }
+            }
+        }
+
+        return valid;
     }
 
     handleReset = e => {
+        this.clearErrorLists();
+
         this.setState(() => this.initialState);
         this.enableHypMeanLabel(this.doHypothesisTest);
     }
@@ -40,51 +122,11 @@ class SampleForm extends Component {
     onInputChange = e => {
         const value = e.target.value;
 
-        switch(e.target.name){
-            case 'sampleSize':
-                if(value !== '' && value < this.minSampleSize){
-                    e.target.setCustomValidity(`Value must be greater than ${this.minSampleSize}`);
-                } else {
-                    if(!this.isInteger(value)){
-                        e.target.setCustomValidity(`Value must be an integer`);
-                    } else {
-                        e.target.setCustomValidity('');
-                    }
-                }
-
-                break;
-
-            case 'sampleMean': 
-            case 'hypMean':
-                if(!this.isFloat(value)){
-                    e.target.setCustomValidity(`Value must be a number`);
-                } else {
-                    e.target.setCustomValidity('');
-                }
-
-                break;
-
-            case 'stDev':
-                if(value === ''){
-                    e.target.setCustomValidity('');
-                } else if(value <= 0){
-                    e.target.setCustomValidity('Value must be greater than 0');
-                } else if(!this.isFloat(value)){
-                    e.target.setCustomValidity('Value must be a number');
-                } else {
-                    e.target.setCustomValidity('');
-                }
-
-                break;
-
-            default:
-                e.target.setCustomValidity('');
-        }
-
         this.setState({
             ...this.state,
             [e.target.name]: value
         });
+        
     }
 
     isInteger = val => {
@@ -93,6 +135,14 @@ class SampleForm extends Component {
 
     isFloat = val => {
         return /^[-+]?[0-9]*\.?[0-9]+/.test(val);
+    }
+
+    clearErrorLists = () => {
+        // clear error lists
+        let errorLists = Object.keys(this.validationErrors);
+        for(let errorList of errorLists){
+            this.validationErrors[errorList] = [];
+        }
     }
 
     onDoTestCheckClick = e => {
@@ -115,10 +165,12 @@ class SampleForm extends Component {
         const { 
             sampleSize, 
             sampleMean, 
-            stDev,
+            stDeviation,
             doHypothesisTest,
-            hypMean
+            hypMean,
+            isSubmitted
          } = this.state;
+         const fieldErrors = this.validationErrors;
 
          return (
                 <div className="form mt-5 mx-auto w-50">
@@ -132,18 +184,21 @@ class SampleForm extends Component {
                             id="size"
                             value={sampleSize}
                             onChange={this.onInputChange}
+                            errors={fieldErrors.sampleSize}
                             label="Sample size" />
                         <TextFormField 
                             name="sampleMean"
                             id="mean"
                             value={sampleMean}
                             onChange={this.onInputChange}
+                            errors={fieldErrors.sampleMean}
                             label="Sample mean" />
                         <TextFormField 
-                            name="stDev"
-                            id="stdev"
-                            value={stDev}
+                            name="stDeviation"
+                            id="stdeviation"
+                            value={stDeviation}
                             onChange={this.onInputChange}
+                            errors={fieldErrors.stDeviation}
                             label="Standard deviation" />
                         <div className="form-check d-flex flex-row mb-0">
                             <input 
@@ -163,6 +218,7 @@ class SampleForm extends Component {
                             id="hypmean"
                             value={hypMean}
                             onChange={this.onInputChange}
+                            errors={fieldErrors.hypMean}
                             disabled={!doHypothesisTest}
                             label="Hypothesized mean" />
                         <div className="mx-auto d-flex justify-content-end">
