@@ -130,7 +130,7 @@ class SampleForm extends Component {
     }
 
     isInteger = val => {
-        return /^\+?(0|[1-9]\d*)$/.test(val);
+        return Number.isInteger(Number(val));
     }
 
     isFloat = val => {
