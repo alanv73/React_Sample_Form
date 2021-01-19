@@ -17,7 +17,7 @@ class OutputTable extends Component {
             sampleSize,
             sampleMean,
             stDev,
-            doHyposthesisTest,
+            doHypothesisTest,
             hypMean
         } = this.props.location.state;
 
@@ -26,16 +26,17 @@ class OutputTable extends Component {
             sampleSize: sampleSize, 
             sampleMean: sampleMean,
             stDev: stDev,
-            doHyposthesisTest: doHyposthesisTest,
+            doHypothesisTest: doHypothesisTest,
             hypMean: hypMean
         });
     }
     render() {
+        console.log(this.state);
         const {
             sampleSize,
             sampleMean,
             stDev,
-            doHyposthesisTest,
+            doHypothesisTest,
             hypMean
         } = this.state;
 
@@ -62,7 +63,7 @@ class OutputTable extends Component {
                             <td>{stDev}</td>
                         </tr>
                         {
-                            doHyposthesisTest
+                            doHypothesisTest
                             &&
                             <tr>
                                 <th className="field-title">Hypothesized mean</th>
